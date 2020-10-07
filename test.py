@@ -4,7 +4,7 @@ import config
 server = config.server
 db = config.db
 da = DA.DataAnalyses()
-sql_paul_home = da.connect_sql(server, db)
-ref_int_new = da.check_referential_integrity_new(sql_paul_home, 'dbo', 'TestB', 'TestAID', sql_paul_home, 'dbo', 'TestA', 'ID')
+db_conn = da.connect_sql(server, db)
+ref_int_new = da.check_referential_integrity_new(master_con=db_conn, 'dbo', 'T_MASTER_SEC', 'CADIS_ID', db_conn, 'dbo', 'T_MASTER_POS', 'CADIS_ID')
 
 print('ids found in TestB which are not found in TestA:', ref_int_new)

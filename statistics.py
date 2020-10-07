@@ -25,7 +25,11 @@ def BasicStats(dataframe):
             else:
                 uniquelist = set(dataframe.iloc[:,i])
             statlist.append([cols[i],'string',
-                             '' ,'' ,'' ,'' ,'' ,
+                             '',
+                             '',
+                             '',
+                             '',
+                             '',
                              int(dataframe.iloc[:,i].count()),
                              '',
                              int(dataframe.iloc[:,i].nunique()),
@@ -35,7 +39,11 @@ def BasicStats(dataframe):
                              dataframe.iloc[:,i].str.contains(notapplicables, na=True).sum()])
         elif dataframe.iloc[:, i].dtypes == 'datetime64[ns]':
             statlist.append([cols[i], 'date',
-                             '', '', '', '', '',
+                             dataframe.iloc[:, i].min(),
+                             dataframe.iloc[:, i].max(),
+                             '',
+                             '',
+                             '',
                              int(dataframe.iloc[:, i].count()),
                              '',
                              int(dataframe.iloc[:, i].nunique()),

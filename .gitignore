@@ -4,4 +4,5 @@ venv/
 # files
 config.py
 file_referential_integrity.csv
+ref_int_checks.json
 *.log

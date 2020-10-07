@@ -71,4 +71,6 @@ class DataAnalyses:
         ref = self.sql_execute(ref_con, self.select_distinct(ref_schema, ref_table, ref_field))
         master = (set(master.iloc[:, 0]))
         reference = (set(ref.iloc[:, 0]))
-        return [[x for x in master if x not in reference]]
+        out = [x for x in master if x not in reference]
+
+        return out
