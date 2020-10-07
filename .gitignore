@@ -1,0 +1,7 @@
+# folders
+venv/
+
+# files
+config.py
+file_referential_integrity.csv
+*.log
