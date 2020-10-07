@@ -2,12 +2,17 @@ import pandas as pd
 
 notapplicables = "N/A|NA|Not applicable|#NA"
 
-def BasicStats(dataframe):
+def BasicStats(table, dataframe):
     statlist = []
     cols = dataframe.columns.tolist()
     for i in range(0, len(dataframe.columns)):
-        if dataframe.iloc[:, i].dtypes == 'float' or dataframe.iloc[:,i].dtypes == 'int' or dataframe.iloc[:,i].dtypes == 'int64' or dataframe.iloc[:,i].dtypes == 'float64' or dataframe.iloc[:,i].dtypes == 'uint8':
-            statlist.append([cols[i], dataframe.iloc[:, i].dtypes,
+
+        if dataframe.iloc[:, i].dtypes == 'float' \
+                or dataframe.iloc[:,i].dtypes == 'int' \
+                or dataframe.iloc[:,i].dtypes == 'int64' \
+                or dataframe.iloc[:,i].dtypes == 'float64' \
+                or dataframe.iloc[:,i].dtypes == 'uint8':
+            statlist.append([table, cols[i], dataframe.iloc[:, i].dtypes,
                              format(dataframe.iloc[:,i].min(), '4f'),
                              format(dataframe.iloc[:,i].max(), '4f'),
                              format(dataframe.iloc[:,i].max() - dataframe.iloc[:,i].min(), '4f'),
@@ -24,21 +29,21 @@ def BasicStats(dataframe):
                 uniquelist = 'too many'
             else:
                 uniquelist = set(dataframe.iloc[:,i])
-            statlist.append([cols[i],'string',
+            statlist.append([table, cols[i], 'string',
                              '',
                              '',
                              '',
                              '',
                              '',
-                             int(dataframe.iloc[:,i].count()),
+                             int(dataframe.iloc[:, i].count()),
                              '',
-                             int(dataframe.iloc[:,i].nunique()),
+                             int(dataframe.iloc[:, i].nunique()),
                              uniquelist,
                              # set(dataframe.iloc[:,i]),
-                             int(dataframe.iloc[:,i].isnull().sum()),
-                             dataframe.iloc[:,i].str.contains(notapplicables, na=True).sum()])
+                             int(dataframe.iloc[:, i].isnull().sum()),
+                             dataframe.iloc[:, i].str.contains(notapplicables, na=True).sum()])
         elif dataframe.iloc[:, i].dtypes == 'datetime64[ns]':
-            statlist.append([cols[i], 'date',
+            statlist.append([table, cols[i], 'date',
                              dataframe.iloc[:, i].min(),
                              dataframe.iloc[:, i].max(),
                              '',
@@ -51,7 +56,7 @@ def BasicStats(dataframe):
                              int(dataframe.iloc[:, i].isnull().sum()),
                              ''])
         elif dataframe.iloc[:,i].dtypes == 'bool':
-            statlist.append([cols[i],'boolean',
+            statlist.append([table, cols[i],'boolean',
                              '', '', '', '', '',
                              int(dataframe.iloc[:,i].count()),
                              '',
@@ -60,7 +65,7 @@ def BasicStats(dataframe):
                              int(dataframe.iloc[:,i].isnull().sum()),
                              ''])
         else:
-            statlist.append([cols[i],'unknown',
+            statlist.append([table, cols[i],'unknown',
                              '', '', '', '', '',
                              int(dataframe.iloc[:,i].count()),
                              '',
@@ -69,7 +74,8 @@ def BasicStats(dataframe):
                              int(dataframe.iloc[:,i].isnull().sum()),
                              ''])
 
-    columns = (['column',
+    columns = (['table',
+                'column',
                 'type',
                 'min',
                 'max',

@@ -2,6 +2,7 @@ import pandas as pd
 import pyodbc
 import logging
 
+# todo: logging settings verplaatsen
 # setup logging
 logger = logging.getLogger(__name__)  # initialize logger
 logger.handlers = []
@@ -17,29 +18,57 @@ class DataAnalyses:
         self.version = '0.0.1'
         self.author = 'Paul Huizinga'
 
-    def connect_sql(self, server, database):
+
+    def database_connect(self, driver=None, server=None, database=None, uid=None, pwd=None, port=None):
         """
         create connection string for SQL Server
-        :param server: servername
-        :param database: databasename
+        :param driver: database driver, mandatory
+        :param server: servername, mandatory
+        :param database: databasename, mandatory
+        :param uid: user id, optional
+        :param pwd: user password, optional
+        :param port: port, optional
         :return: connetion string
         """
-        driver = 'SQL Server'
         trusted_connection = 'yes'
-        conn_string = 'Driver={};Server={};Database={};Trusted_Connection={};'
 
-        conn = pyodbc.connect(conn_string.format(driver, server, database, trusted_connection))
+        if driver == None or server == None or database == None:
+            logger.debug("database connection details missing")
+            return
+
+        conn_string = 'Driver={};Server={};Database={};Trusted_Connection={}'.format(driver, server, database,
+                                                                                     trusted_connection)
+
+        if uid != None:
+            UID = ';UID=' + str(uid)
+            conn_string = conn_string + UID
+        if pwd != None:
+            PWD = ';PWD=' + str(pwd)
+            conn_string = conn_string + PWD
+        if port != None:
+            PORT = ';PORT=' + str(port)
+            conn_string = conn_string + PORT
 
         logger.debug(conn_string)
+
+        conn = pyodbc.connect(conn_string)
 
         return conn
 
-    def connect_postgress(self, server, database):
-        conn_string = 'DRIVER={PostgreSQL Unicode};DATABASE=postgres;UID=postgres;PWD=whatever;SERVER=localhost;PORT=5432;'
 
-        logger.debug(conn_string)
+    def select_all(self, conn, tablename):
+        """
 
-        return conn_string
+        :param tablename:
+        :return:
+        """
+        sql_base = 'SELECT * FROM [{}]'
+        sql_string = sql_base.format(tablename)
+        logger.debug(sql_string)
+        df = self.sql_execute(conn, sql_string)
+
+        return df
+
 
     def select_distinct(self, schemaname, tablename, fieldname):
         """
@@ -56,14 +85,23 @@ class DataAnalyses:
 
         return sql_string
 
+
+    def select_information_schema(self, conn, schemaname):
+        sql_base = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '{}'"
+        sql_string = sql_base.format(schemaname)
+
+        logger.debug(sql_string)
+
+        df = self.sql_execute(conn, sql_string)
+        tables = df.TABLE_NAME.unique()
+
+        return df, tables
+
+
     def sql_execute(self, conn, sql):
         df = pd.read_sql(sql, conn)
         return df
 
-    # def check_referential_integrity(self, master, reference):
-    #     master = (set(master.iloc[:, 0]))
-    #     reference = (set(reference.iloc[:, 0]))
-    #     return [[x for x in master if x not in reference]]
 
     def check_referential_integrity_new(self, master_con, master_schema, master_table, master_field, ref_con,
                                         ref_schema, ref_table, ref_field):
