@@ -1,7 +1,8 @@
 import DataAnalyses as DA
+import config
 
-server = r'DESKTOP-DB7OB87\SQLPMH'
-db = 'TkpiDataInterface'
+server = config.server
+db = config.db
 da = DA.DataAnalyses()
 sql_paul_home = da.connect_sql(server, db)
 ref_int_new = da.check_referential_integrity_new(sql_paul_home, 'dbo', 'TestB', 'TestAID', sql_paul_home, 'dbo', 'TestA', 'ID')
