@@ -1,0 +1,17 @@
+from . import statistics
+import pyodbc
+import config
+import pandas as pd
+
+
+# read config
+driver = config.driver
+server = config.server
+db = config.db
+
+conn_string = 'Driver={};Server={};Database={};Trusted_Connection=yes'.format(driver, server, db)
+conn = pyodbc.connect(conn_string)
+
+# fetch data
+df = pd.read_sql("select * from t_ref_portfolio_code", conn)
+

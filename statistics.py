@@ -1,4 +1,7 @@
 import pandas as pd
+import logging_settings
+
+logger = logging_settings.setup_logger()
 
 notapplicables = "N/A|NA|Not applicable|#NA"
 
@@ -6,6 +9,8 @@ def BasicStats(table, dataframe):
     statlist = []
     cols = dataframe.columns.tolist()
     for i in range(0, len(dataframe.columns)):
+
+        logger.debug('Datatype for table: {}, field: {} is {}'.format(table, cols[i], dataframe.iloc[:, i].dtypes) )
 
         if dataframe.iloc[:, i].dtypes == 'float' \
                 or dataframe.iloc[:,i].dtypes == 'int' \
@@ -41,7 +46,7 @@ def BasicStats(table, dataframe):
                              uniquelist,
                              # set(dataframe.iloc[:,i]),
                              int(dataframe.iloc[:, i].isnull().sum()),
-                             dataframe.iloc[:, i].str.contains(notapplicables, na=True).sum()])
+                             ''])#dataframe.iloc[:, i].str.contains(notapplicables, na=True).sum()])
         elif dataframe.iloc[:, i].dtypes == 'datetime64[ns]':
             statlist.append([table, cols[i], 'date',
                              dataframe.iloc[:, i].min(),
@@ -89,6 +94,9 @@ def BasicStats(table, dataframe):
                 'nulls',
                 'not applicable'])
 
+    logger.debug(statlist)
+
     statframe = pd.DataFrame(statlist, columns=columns)
-    return statframe
+
+    return statframe, statlist
 

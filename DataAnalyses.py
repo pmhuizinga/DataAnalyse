@@ -1,17 +1,8 @@
 import pandas as pd
 import pyodbc
-import logging
+import logging_settings
 
-# todo: logging settings verplaatsen
-# setup logging
-logger = logging.getLogger(__name__)  # initialize logger
-logger.handlers = []
-c_handler = logging.StreamHandler()  # Create handlers
-c_format = logging.Formatter('%(levelname)s - %(message)s')
-c_handler.setFormatter(c_format)  # Create formatters and add it to handlers
-logger.addHandler(c_handler)  # Add handlers to the logger
-logger.setLevel(logging.DEBUG)
-
+logger = logging_settings.setup_logger()
 
 class DataAnalyses:
     def __init__(self):
@@ -87,7 +78,8 @@ class DataAnalyses:
 
 
     def select_information_schema(self, conn, schemaname):
-        sql_base = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '{}'"
+        #sql_base = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '{}'"
+        sql_base = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME LIKE 'T_MASTER_%' OR TABLE_NAME LIKE 'T_REF_%'"
         sql_string = sql_base.format(schemaname)
 
         logger.debug(sql_string)
@@ -112,3 +104,4 @@ class DataAnalyses:
         out = [x for x in master if x not in reference]
 
         return out
+
